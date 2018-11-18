@@ -79,28 +79,7 @@ public abstract class Page {
         if (driver == null) {
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
-        }
-    }
-
-    public static void initDriver(DriverManagerType drivers){
-        if (driver == null) {
-            WebDriverManager.getInstance(drivers).setup();
-            switch (drivers) {
-                case CHROME:
-                    driver = new ChromeDriver();
-                    break;
-                case FIREFOX:
-                    driver = new FirefoxDriver();
-                    break;
-                case OPERA:
-                    driver = new OperaDriver();
-                    break;
-                case EDGE:
-                    driver = new EdgeDriver();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Select Webdriver type");
-            }
+            driver.manage().window().maximize();
         }
     }
 
@@ -118,7 +97,7 @@ public abstract class Page {
 
     public void checkLinks (List<WebElement> links, List<String> names){
         List <String> linksText  = links.stream()
-                .map(link -> link.getAttribute("outerText").trim().toLowerCase())
+                .map(link -> link.getText().trim().toLowerCase())
                 .collect(Collectors.toList());
         names.forEach(name ->
                 Assert.assertTrue(String.format("Link with text: '%s', not displayed", name ),linksText.contains(name.toLowerCase()))
@@ -145,5 +124,14 @@ public abstract class Page {
         element.click();
         element.clear();
         element.sendKeys(text);
+    }
+
+    public void standartWait(){
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 }

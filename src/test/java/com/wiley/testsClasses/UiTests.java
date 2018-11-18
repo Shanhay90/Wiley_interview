@@ -18,6 +18,7 @@ public class UiTests {
     public  void openBrowser(){
         Page.initDriver();
         this.driver = Page.getDriver();
+        driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
         driver.get("http://www.wiley.com/WileyCDA/");
@@ -116,7 +117,6 @@ public class UiTests {
 
     @After
     public void closeBrowser(){
-        Page.driver.close();
         Page.driver.quit();
         Page.driver = null;
     }
