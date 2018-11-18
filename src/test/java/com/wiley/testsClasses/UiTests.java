@@ -1,9 +1,7 @@
 package com.wiley.testsClasses;
 
-import com.wiley.pages.CountyModalWindow;
-import com.wiley.pages.Page;
-import com.wiley.pages.StartPage;
-import com.wiley.pages.StudentsPage;
+import com.wiley.pages.*;
+import io.github.bonigarcia.wdm.DriverManagerType;
 import org.junit.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -48,7 +46,7 @@ public class UiTests {
     }
 
     @Test
-    public void checkClickStudentsItem(){
+    public void checkStudentsPage(){
         StartPage startPage = new StartPage();
         WebElement link = startPage.findLink(startPage.getHeaderLinks(),"Resources");
         startPage.initUnderHeaderLinks(link);
@@ -60,6 +58,60 @@ public class UiTests {
         Assert.assertTrue(studentsPage.getWileyPlusLink().isDisplayed());
         Assert.assertTrue(studentsPage.checkElementHRef(studentsPage.getWileyPlusLink(), "http://wileyplus.wiley.com/"));
     }
+
+    @Test
+    public void checkEducationPage(){
+        StartPage startPage = new StartPage();
+        WebElement link = startPage.findLink(startPage.getHeaderLinks(),"Subjects");
+        startPage.initUnderHeaderLinks(link);
+        startPage.moveToElement(link);
+        WebElement subHeaderLink = startPage.findLink(startPage.getUnderHeaderLinks(),"E-L");
+        startPage.initSubHeaderLinks(subHeaderLink);
+        startPage.moveToElement(subHeaderLink);
+        WebElement newLink = startPage.findLink(startPage.getSubHeaderLinks(),"Education");
+        startPage.moveToElement(newLink);
+        newLink.click();
+        EducationPage educationPage = new EducationPage();
+        Assert.assertTrue(educationPage.getEducationLogo().isDisplayed());
+        WebElement subjects = educationPage.getSubjectsLogo();
+        WebElement productsBloc = educationPage.getRecentlyReleasedProducts();
+        Assert.assertTrue(subjects.isDisplayed());
+        Assert.assertTrue(subjects.getLocation().getX() < productsBloc.getLocation().getX());
+        Assert.assertEquals(13, educationPage.getUnderSubjectsLinks().size());
+        List<String> linksNames = Arrays.asList(
+                "Information & Library Science","Education & Public Policy", "K-12 General", "Higher Education General",
+                "Vocational Technology", "Conflict Resolution & Mediation (School settings)", "Curriculum Tools- General",
+                "Special Educational Needs", "Theory of Education", "Education Special Topics",
+                "Educational Research & Statistics", "Literacy & Reading", "Classroom Management"
+        );
+        educationPage.checkLinks(educationPage.getUnderSubjectsLinks(), linksNames);
+    }
+
+    @Test
+    public void checkStartPage(){
+        StartPage startPage = new StartPage();
+        Assert.assertEquals("https://www.wiley.com/en-ru", driver.getCurrentUrl());
+        WebElement link = startPage.findLink(startPage.getHeaderLinks(),"Resources");
+        startPage.initUnderHeaderLinks(link);
+        startPage.moveToElement(link);
+        startPage.findLink(startPage.getUnderHeaderLinks(),"Students").click();
+        StudentsPage studentsPage = new StudentsPage();
+        Assert.assertEquals( "https://www.wiley.com/en-ru/students" ,driver.getCurrentUrl());
+        startPage.getHeaderLogo().click();
+        StartPage newStartPage = new StartPage();
+        Assert.assertEquals("https://www.wiley.com/en-ru", driver.getCurrentUrl());
+    }
+
+    @Test
+    public void checkEmptySearchInput(){
+        StartPage startPage = new StartPage();
+        Assert.assertEquals("https://www.wiley.com/en-ru", driver.getCurrentUrl());
+        startPage.getSearchButton().click();
+        Assert.assertEquals("https://www.wiley.com/en-ru", driver.getCurrentUrl());
+    }
+
+
+
 
 
     @After
