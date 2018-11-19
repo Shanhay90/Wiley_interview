@@ -115,7 +115,7 @@ public class UiTests {
     }
 
     @Test
-    public void checkMathInInput(){
+    public void test7and8checkMathInInput(){
         StartPage startPage = new StartPage();
         startPage.sendTextToElement(startPage.getInputFieldSearch(), "Math");
         startPage.waitUntilVisible(startPage.getSearchWidget());
@@ -134,13 +134,14 @@ public class UiTests {
     }
 
     @Test
-    public void checkMathInInputAndSearch(){
+    public void test9checkMathInInput(){
         StartPage startPage = new StartPage();
         startPage.sendTextToElement(startPage.getInputFieldSearch(), "Math");
         startPage.getSearchButton().click();
         List<String> searchValue = Arrays.asList("Math");
         SearchResultPage searchResultPage = new SearchResultPage();
         Assert.assertEquals(10, searchResultPage.getProductsItemList().size());
+        searchResultPage.checkAddToCardInProducts();
         searchResultPage.checkListTextByType(searchResultPage.getProductsTitle(),"contains", searchValue);
     }
 

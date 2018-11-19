@@ -1,6 +1,7 @@
 package com.wiley.pages;
 
 import lombok.Getter;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -32,7 +33,15 @@ public class SearchResultPage extends Page {
 
 
     public void checkAddToCardInProducts() {
+        for (WebElement product : productsItemList){
+            List<WebElement> addToCardButtons = product.findElements(By.xpath(".//button[text()='Add to cart']"));
+            Assert.assertTrue(String.format("In the block with the text '%s' there is no Add To Card button", getProductName(product)), addToCardButtons!=null && addToCardButtons.size()>=1);
+        }
 
+    }
+
+    private String getProductName(WebElement product) {
+        return product.findElement(By.xpath("//*[@class='product-title']/a")).getText().trim();
     }
 }
 
