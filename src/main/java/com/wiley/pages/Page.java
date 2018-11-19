@@ -69,7 +69,7 @@ public abstract class Page {
      */
 
     @FindBy(xpath = "//div[@class='main-navigation-search']//div[@class='input-group']/input[@type='search']")
-    private WebElement inputField;
+    private WebElement inputFieldSearch;
 
     @FindBy(xpath = "//div[@class='main-navigation-search']//div[@class='input-group']//button[@type='submit']")
     private WebElement searchButton;
@@ -82,6 +82,14 @@ public abstract class Page {
             driver.manage().window().maximize();
         }
     }
+
+    @FindBy(xpath = "//div[contains(@class ,'main-navigation-search-autocomplete')][contains(@class,'ui-widget-content')]")
+    protected WebElement searchWidget;
+
+
+
+
+
 
     public static WebDriver getDriver() {
         return driver;
@@ -133,5 +141,35 @@ public abstract class Page {
             e.printStackTrace();
         }
 
+    }
+
+    public void checkListTextByType(List<WebElement> list, String type, List<String> searchValue) {
+        List<String> textInLinks = list
+                .stream()
+                .map(link -> link.getText().trim().toLowerCase())
+                .collect(Collectors.toList());
+        switch (type) {
+            case "contains":
+                searchValue.forEach(value -> {
+                    textInLinks.forEach(
+                            linkText ->
+                            Assert.assertTrue(String.format("Element with text '%s', not contains '%s'", linkText, searchValue), linkText.contains(value.toLowerCase())));
+                });
+                break;
+            case "startWith":
+                searchValue.forEach(value -> {
+                    textInLinks.forEach(linkText ->
+                            Assert.assertTrue(String.format("Element with text '%s', not start with '%s'", linkText, searchValue),linkText.startsWith(value.toLowerCase())));
+                });
+                break;
+            case "endsWith":
+                searchValue.forEach(value -> {
+                    textInLinks.forEach(linkText ->
+                            Assert.assertTrue(String.format("Element with text '%s', not ends with '%s'", linkText, searchValue),linkText.endsWith(value.toLowerCase())));
+                });
+                break;
+            default:
+                throw new IllegalArgumentException("Wrong type to search");
+        }
     }
 }

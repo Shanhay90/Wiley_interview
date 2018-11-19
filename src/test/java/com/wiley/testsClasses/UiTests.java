@@ -1,8 +1,8 @@
 package com.wiley.testsClasses;
 
 import com.wiley.pages.*;
-import io.github.bonigarcia.wdm.DriverManagerType;
 import org.junit.*;
+import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -12,15 +12,18 @@ import java.util.concurrent.TimeUnit;
 
 public class UiTests {
 
-    private WebDriver driver;
+    private static WebDriver driver;
 
-    @Before
-    public  void openBrowser(){
+    @BeforeClass
+    public static void openBrowser(){
         Page.initDriver();
-        this.driver = Page.getDriver();
+        driver = Page.getDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    }
 
+    @Before
+    public void start(){
         driver.get("http://www.wiley.com/WileyCDA/");
         CountyModalWindow countyModalWindow = new CountyModalWindow();
         if (countyModalWindow.isDisplayed())
@@ -111,13 +114,43 @@ public class UiTests {
         Assert.assertEquals("https://www.wiley.com/en-ru", driver.getCurrentUrl());
     }
 
+    @Test
+    public void checkMathInInput(){
+        StartPage startPage = new StartPage();
+        startPage.sendTextToElement(startPage.getInputFieldSearch(), "Math");
+        startPage.waitUntilVisible(startPage.getSearchWidget());
+        SearchWidget searchWidget = new SearchWidget();
+        Assert.assertTrue(searchWidget.getSearchList().get(0).getLocation().getY() > searchWidget.getInputFieldSearch().getLocation().getY());
+        Assert.assertTrue(searchWidget.getSearchList().get(0).getLocation().getX() < searchWidget.getSearchContentList().get(0).getLocation().getX());
+        List<String> searchValue = Arrays.asList("Math");
+        searchWidget.checkListTextByType(searchWidget.getSearchList(), "startWith", searchValue);
+        searchWidget.checkListTextByType(searchWidget.getSearchContentList(), "contains", searchValue);
+        searchWidget.getSearchButton().click();
+        SearchResultPage searchResultPage = new SearchResultPage();
+        Assert.assertEquals(10, searchResultPage.getProductsItemList().size());
+        searchResultPage.checkAddToCardInProducts();
+        searchResultPage.checkListTextByType(searchResultPage.getProductsTitle(),"contains", searchValue);
+
+    }
+
+    @Test
+    public void checkMathInInputAndSearch(){
+        StartPage startPage = new StartPage();
+        startPage.sendTextToElement(startPage.getInputFieldSearch(), "Math");
+        startPage.getSearchButton().click();
+        List<String> searchValue = Arrays.asList("Math");
+        SearchResultPage searchResultPage = new SearchResultPage();
+        Assert.assertEquals(10, searchResultPage.getProductsItemList().size());
+        searchResultPage.checkListTextByType(searchResultPage.getProductsTitle(),"contains", searchValue);
+    }
 
 
 
 
-    @After
-    public void closeBrowser(){
-        Page.driver.quit();
-        Page.driver = null;
+
+    @AfterClass
+    public static void closeBrowser(){
+        driver.quit();
+        driver = null;
     }
 }
