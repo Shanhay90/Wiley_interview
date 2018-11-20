@@ -43,6 +43,7 @@ public class UiTests {
         WebElement link = startPage.findLink(startPage.getHeaderLinks(),"Resources");
         startPage.moveToElement(link);
         startPage.initUnderHeaderLinks(link);
+        startPage.waitUntilVisible(startPage.getUnderHeaderLinks().get(0));
         List<String> linksNames = Arrays.asList(
                 "Students","Instructors", "Researchers", "Professionals", "Librarians", "Institutions", "Authors", "Resellers", "Corporations", "Societies"
                 );
