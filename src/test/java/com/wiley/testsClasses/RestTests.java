@@ -27,7 +27,7 @@ public class RestTests {
         byte[] downloadImage = restServices.getImage("/image/png");
         File expectedImage = new File(imageFolder+"expectedImage.png");
         byte[] expectedByte = Files.toByteArray(expectedImage);
-        Assert.assertArrayEquals("Цrong image", expectedByte, downloadImage);
+        Assert.assertArrayEquals("Wrong image", expectedByte, downloadImage);
         FileOutputStream outputStream = new FileOutputStream(imageFolder+"downloadImage.png");
         outputStream.write(downloadImage);
         outputStream.close();
